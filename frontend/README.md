@@ -1,16 +1,22 @@
-# React + Vite
+# SupplyDesk frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Run from this directory:
 
-Currently, two official plugins are available:
+```sh
+npm install
+npm run dev
+```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+The frontend uses React, Vite and plain CSS. No additional dependencies.
 
-## React Compiler
+## Backend integration (proposed contract)
+The backend currently only implements GET /. Implement these routes yourself or change the route strings in `src/App.jsx`.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- POST `/shipments`: JSON `{ "Sno": "s2", "Pno": "p3", "Qty": 200, "Price": 0.006 }`. Return `{ "success": true, "message": "Shipment inserted successfully." }` or an appropriate HTTP error with `detail`. Duplicate keys should be reported as failures.
+- PATCH `/suppliers/status`: increase all supplier statuses by 10%; return a success/message object. Each click applies a new increase.
+- GET `/suppliers`: return an array of `{ "Sno": "s1", "Sname": "Smith", "Status": 20, "City": "London" }`.
+- GET `/suppliers/by-part?part_no=p2`: return the same array shape, filtered by part. Use parameterized SQL in the backend; frontend input validation and URL encoding do not prevent SQL injection.
 
-## Expanding the Oxlint configuration
+The API defaults to `http://localhost:8000`. To override it, add `VITE_API_URL=http://localhost:8000` to a frontend `.env` file and restart Vite. Configure FastAPI CORS for your Vite origin (usually http://localhost:5173).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+No mock success messages or fake supplier records are displayed. The interface can be viewed before the backend is implemented, but operations need the API.
