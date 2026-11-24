@@ -1,5 +1,5 @@
 -- Set of SQL statements to drop the above three relations
-use HW3and4_CSCI_4560;
+use HW5;
 -- Drop SHIPMENT first because it contains foreign keys
 -- that reference SUPPLIER and PART
 DROP TABLE SHIPMENT;
