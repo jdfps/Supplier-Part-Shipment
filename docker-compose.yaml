@@ -1,0 +1,58 @@
+
+services:
+
+  db:
+    image: mysql:8.4
+    command: --lower-case-table-names=1
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/database/CreateDB.sql:/docker-entrypoint-initdb.d/01-create.sql:ro
+      - ./backend/database/LoadDB.sql:/docker-entrypoint-initdb.d/02-load.sql:ro
+
+    healthcheck:
+      test: ["CMD-SHELL", "mysql --protocol=TCP -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE -e 'SELECT 1 FROM SUPPLIER LIMIT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build: ./backend
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+
+    ports:
+      - "5173:5173"
+
+    environment:
+      VITE_API_URL: http://backend:8000
+
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

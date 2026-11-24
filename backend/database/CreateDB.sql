@@ -1,14 +1,10 @@
 # Set of SQL statements to create the above three relations
 
 -- drop db if it is already existing
-drop database if exists HW5;
 
--- create a new version of everything
-create database HW5;
+CREATE DATABASE IF NOT EXISTS HW5;
 
--- go ahead and use that puppy (:
-use HW5;
-
+USE HW5;
 
 CREATE TABLE SUPPLIER
 (
