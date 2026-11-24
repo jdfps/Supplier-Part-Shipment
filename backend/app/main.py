@@ -173,3 +173,24 @@ def delete_shipment2():
             status_code=500,
             detail="Failed to delete shipment 2"
         )
+
+
+@app.get("/search")
+def search(part_no:str):
+    try:
+        with engine.begin() as connection:
+            result = connection.execute(
+                text("""
+                SELECT DISTINCT s.* FROM supplier AS s INNER JOIN shipment AS sh ON s.sno = sh.sno WHERE sh.pno = :part;
+                """),
+                {"part" : part_no}
+            )
+        suppliers = result.mappings().all()
+
+        return [dict(supplier) for supplier in suppliers]
+    except SQLAlchemyError as e:
+            print(e)
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to find pno {part_no}"
+            )
