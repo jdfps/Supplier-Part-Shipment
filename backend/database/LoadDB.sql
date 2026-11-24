@@ -1,7 +1,7 @@
 # set of SQL statements to load the above data to the database
 
 -- make sure we are putting info in same database (:
-use HW3and4_CSCI_4560;
+use HW5;
 
 -- load data into SUPPLIER
 INSERT INTO SUPPLIER (Sno, Sname, Status, City)
